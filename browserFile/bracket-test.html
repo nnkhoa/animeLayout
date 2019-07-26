@@ -1,0 +1,85 @@
+<html>
+    <head>
+        <style>
+            .akashi {
+                font-family: Akashi;
+            }
+        </style>
+        <meta charset="utf-8"/>
+        <script src="js/easeljs-2017.10.12.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="js/tweenjs-2017.10.12.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="js/countries.js" type="text/javascript" charset="utf-8"></script>
+        <script src="js/common.js" type="text/javascript" charset="utf-8"></script>
+        <script src="js/overlay-updater.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript">
+
+            const maxNameWidth = 240;
+            const maxScoreWidth = 50;
+            const fontsize = 35;
+            const fontcolor = "#FFFFFF";
+            const losecolor = "#708090";
+            var stage;
+
+            function fontLog(fontFace) {
+                console.log("Font " + fontFace + " loaded successfully.");
+            }
+
+            function newMatch(matchtag, x, y) {
+                let match = new createjs.Container();
+                match.x = x;
+                match.y = y;
+
+                match.addChild(newDynText(`${matchtag}p1`, 0, 0, maxNameWidth, fontsize, fontcolor, "left"));
+                match.addChild(newDynText(`${matchtag}p1s`, 280, 0, maxScoreWidth, fontsize, fontcolor, "center"));
+                match.addChild(newDynText(`${matchtag}p2`, 0, 65, maxNameWidth, fontsize, fontcolor, "left"));
+                match.addChild(newDynText(`${matchtag}p2s`, 280, 65, maxScoreWidth, fontsize, fontcolor, "center"));
+                return match;
+            }
+            
+            function init() {
+
+                var akashiFont = new FontFace('UTM Akashi', 'url(fonts/UTMAkashi.ttf)');
+                document.fonts.add(akashiFont);
+                akashiFont.loaded.then(fontLog);
+                document.fonts.ready.then(function() {
+                    console.log("FontFace loaded");
+                });
+
+                var timeout = this.window.setInterval(function() {
+                    pollHandler();
+                }, 250);
+
+                stage = new createjs.Stage("myCanvas");
+                let board = new createjs.Container();
+                board.addChild(new createjs.Bitmap("images/top8-uni.png"));
+                board.addChild(newMatch("ws1", 70, 192));
+                board.addChild(newMatch("ws2", 70, 372));
+                board.addChild(newMatch("wf", 553, 280));
+                board.addChild(newMatch("ltop81", 70, 605));
+                board.addChild(newMatch("ltop82", 70, 783));
+                board.addChild(newMatch("lq1", 553, 513));
+                board.addChild(newMatch("lq2", 553, 693));
+                board.addChild(newMatch("ls", 1043, 600));
+                board.addChild(newMatch("lf", 1528, 539));
+                board.addChild(newMatch("gf", 1043, 344));
+
+                stage.addChild(board);
+
+                createjs.Ticker.addEventListener("tick", enterFrame);
+                createjs.Ticker.framerate = 60;
+
+                stage.update();
+            }
+            
+            function enterFrame(event) {
+                stage.update(event);
+            }
+
+        </script>
+    </head>
+    <body onLoad="init()" style="margin:0px;">
+        <canvas id="myCanvas" width="1920" height="1080">
+            canvas
+        </canvas>
+    </body>
+</html>
